@@ -34,7 +34,7 @@ public class PostService {
 	}
 
 	public Post createOnePost(PostCreateRequest newPostRequest) {
-		User user = userService.getOneUser(newPostRequest.getUserId());
+		User user = userService.getOneUserById(newPostRequest.getUserId());
 		if(user == null)
 			return null;
 		Post toSave = new Post();
@@ -47,7 +47,7 @@ public class PostService {
 
 	public Post updateOnePostById(Long postId, PostUpdateRequest updatePost) {
 		Optional<Post> post = postRepository.findById(postId);
-		if(post.isPresent()) {
+		if(post.isPresent()) { //validation
 			Post toUpdate = post.get();
 			toUpdate.setText(updatePost.getText());
 			toUpdate.setTitle(updatePost.getTitle());

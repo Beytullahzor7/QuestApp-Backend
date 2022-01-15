@@ -1,5 +1,6 @@
 package com.project.questapp.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,12 @@ public class PostService {
 	public Post getOnePostById(Long postId) {
 		return postRepository.findById(postId).orElse(null);
 	}
+	
+	public PostResponse getOnePostByIdWithlikes(Long postId) {
+		Post post = postRepository.findById(postId).orElse(null);
+		List<LikeResponse> likes =  likeService.getAllLikesWithParam(Optional.ofNullable(null), Optional.of(postId));
+		return new PostResponse(post, likes); 
+	}
 
 	public Post createOnePost(PostCreateRequest newPostRequest) {
 		User user = userService.getOneUserById(newPostRequest.getUserId());
@@ -56,6 +63,7 @@ public class PostService {
 		toSave.setText(newPostRequest.getText());
 		toSave.setTitle(newPostRequest.getTitle());
 		toSave.setUser(user); //if koşulu ile validate ettiğimiz useri oluşturduk
+		toSave.setCreateDate(new Date());
 		return postRepository.save(toSave);
 	}
 

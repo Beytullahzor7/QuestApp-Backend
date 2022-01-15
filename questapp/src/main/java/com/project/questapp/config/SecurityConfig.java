@@ -25,12 +25,11 @@ import com.project.questapp.services.UserDetailServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private UserDetailServiceImpl userDetailService;
-
+	private UserDetailServiceImpl userDetailsService;
 	private JwtAuthenticationEntryPoint handler;
 
-	public SecurityConfig(UserDetailServiceImpl userDetailServiceImpl, JwtAuthenticationEntryPoint handler) {
-		this.userDetailService = userDetailServiceImpl;
+	public SecurityConfig(UserDetailServiceImpl userDetailsService, JwtAuthenticationEntryPoint handler) {
+		this.userDetailsService = userDetailsService;
 		this.handler = handler;
 	}
 
@@ -52,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

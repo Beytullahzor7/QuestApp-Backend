@@ -1,5 +1,7 @@
 package com.project.questapp.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -44,5 +48,8 @@ public class Comment {
 	@Lob
 	@Column(columnDefinition="text") //mysql in stringi text olarak algılamasını sagladım yoksa default varchar255 yazacaktı
 	String text;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	Date createDate;
 
 }

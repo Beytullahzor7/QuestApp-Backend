@@ -19,41 +19,42 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.project.questapp.security.JwtAuthenticationEntryPoint;
 import com.project.questapp.security.JwtAuthenticationFilter;
-import com.project.questapp.services.UserDetailServiceImpl;
+import com.project.questapp.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-	private UserDetailServiceImpl userDetailsService;
+	
+	private UserDetailsServiceImpl userDetailsService;
+	
 	private JwtAuthenticationEntryPoint handler;
-
-	public SecurityConfig(UserDetailServiceImpl userDetailsService, JwtAuthenticationEntryPoint handler) {
+	
+	public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthenticationEntryPoint handler) {
 		this.userDetailsService = userDetailsService;
 		this.handler = handler;
 	}
-
+	
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
 		return new JwtAuthenticationFilter();
 	}
-
+	
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
+	
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
-
+	
 	@Bean
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -71,25 +72,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}
-
+	
 	@Override
 	public void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity
-		.cors()
-		.and()
-		.csrf().disable()
-		.exceptionHandling().authenticationEntryPoint(handler).and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-		.authorizeRequests()
-		.antMatchers(HttpMethod.GET, "/posts") //anasayfaya erişime tokensiz izin verdik
-		.permitAll()
-		.antMatchers(HttpMethod.GET, "/comments")
-		.permitAll()
-		.antMatchers("/auth/**")
-		.permitAll()
-		.anyRequest().authenticated();
-
+		httpSecurity.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(handler).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.antMatchers(HttpMethod.GET, "/posts").permitAll().antMatchers(HttpMethod.GET, "/comments").permitAll()
+				.antMatchers("/auth/**").permitAll().anyRequest().authenticated();
+		
 		httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
-
 }

@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -18,29 +17,30 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
-@Table(name = "post")
+@Table(name = "refresh_token")
 @Data
-public class Post {
+public class RefreshToken {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
 	User user;
 	
-	String title;
+	@Column(nullable = false, unique = true)
+	String token;
 	
-	@Lob
-	@Column(columnDefinition = "text") // mysql içerisinde stringi text algılaması için yaptım yoksa varchar255 alacaktı
-	String text;
-	
+	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	Date createDate;
+	Date expiryDate;
 	
 }
